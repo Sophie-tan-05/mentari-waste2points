@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Design system tokens (Poster direction) ── */
+  --color-paper:       #F1ECD2;
+  --color-paper-2:     #EAE2BE;
+  --color-ink:         #1B2E1C;
+  --color-muted:       #5A7A5C;
+  --color-green:       #2E7D32;
+  --color-green-mid:   #4CAF50;
+  --color-green-pale:  #E8F5E9;
+  --color-green-deep:  #1F5C23;
+  --color-sun:         #F4C24B;
+  --color-torn:        #59AE4F;
+
+  /* ── Legacy brand tokens (kept for other pages) ── */
+  --color-brand-green:       #2E7D32;
+  --color-brand-green-mid:   #4CAF50;
+  --color-brand-green-light: #A5D6A7;
+  --color-brand-green-pale:  #E8F5E9;
+  --color-brand-white:       #FFFFFF;
+  --color-brand-off-white:   #F9FBF9;
+  --color-brand-charcoal:    #1B2E1C;
+  --color-brand-muted:       #5A7A5C;
+  --color-brand-border:      #C8E6C9;
+  --color-brand-reject:      #C62828;
+  --color-brand-reject-bg:   #FFEBEE;
+
+  /* ── Typography ── */
+  --font-display: var(--font-young-serif, 'Young Serif', Georgia, serif);
+  --font-sans:    var(--font-hanken, 'Hanken Grotesk', system-ui, sans-serif);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: #F1ECD2;
+  color: #1B2E1C;
+  font-size: 17px;
+  line-height: 1.6;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Laser scan animation ── */
+@keyframes laser {
+  0%, 100% { top: 28%; }
+  50%       { top: 64%; }
+}
+.animate-laser { animation: laser 1.5s ease-in-out infinite; }
+
+/* ── Success pop animation ── */
+@keyframes success-pop {
+  0%   { opacity: 0; transform: scale(0.95) translateY(8px); }
+  60%  { transform: scale(1.02) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.animate-success { animation: success-pop 0.4s ease-out both; }
+
+/* ── FAQ max-height transition ── */
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.faq-answer.is-open { max-height: 240px; }

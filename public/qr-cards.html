@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Waste2Points — QR Cards</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 24px;
+    }
+    h1 {
+      text-align: center;
+      color: #2E7D32;
+      margin-bottom: 8px;
+      font-size: 20px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #5A7A5C;
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+    }
+    .card {
+      background: white;
+      border: 2px solid #C8E6C9;
+      border-radius: 16px;
+      padding: 20px 16px 16px;
+      width: 180px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      break-inside: avoid;
+    }
+    .card-header {
+      background: #2E7D32;
+      color: white;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+    .card img {
+      width: 140px;
+      height: 140px;
+      border-radius: 4px;
+    }
+    .unit {
+      margin-top: 10px;
+      font-size: 15px;
+      font-weight: bold;
+      color: #1B2E1C;
+    }
+    .qr-code-text {
+      font-size: 11px;
+      color: #5A7A5C;
+      margin-top: 4px;
+      font-family: monospace;
+    }
+    .instructions {
+      margin-top: 8px;
+      font-size: 10px;
+      color: #888;
+      line-height: 1.4;
+    }
+    .divider {
+      border-top: 1px dashed #C8E6C9;
+      margin-top: 10px;
+      padding-top: 8px;
+    }
+    .app-url {
+      font-size: 10px;
+      color: #2E7D32;
+      font-weight: bold;
+    }
+    @media print {
+      body { background: white; padding: 10px; }
+      h1, .subtitle { display: none; }
+      .grid { gap: 12px; }
+      .card { box-shadow: none; border-color: #aaa; }
+    }
+  </style>
+</head>
+<body>
+  <h1>♻️ Waste2Points — QR Cards</h1>
+  <p class="subtitle">Print and cut. Give one card per household. / Cetak dan gunting. Satu kad untuk setiap isi rumah.</p>
+
+  <div class="grid">
+    
+    <div class="card">
+      <div class="card-header">♻️ Waste2Points</div>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAAAklEQVR4AewaftIAAAR4SURBVO3B0XFsKxYFwdKONgNswH8zsAH80MiAu/h4xIluaSrz6/sHkv6pkBQVkqJCUlRIigpJUSEpKiRFhaSokBQVkqJCUlRIigpJUSEpKiRFLy610fnL9lx8sjY6J3suTtro/GV7Lm4UkqJCUlRIigpJUSEpKiRFhaToxcP2XHyyNjo32ujc2HPxyfZcfLI2Ok8qJEWFpKiQFBWSokJSVEiKCknRizdro/OkPRdP2nNx0kbnpI3OyZ6Lkz0X79RG50l7Lt6pkBQVkqJCUlRIigpJUSEpKiRFL/TR2ujc2HOh/66QFBWSokJSVEiKCklRISkqJEUvdKWNzo09FydtdPQ+haSokBQVkqJCUlRIigpJUSEpevFmey5+sz0XJ210Ttro3Nhz8U57Lv6yQlJUSIoKSVEhKSokRYWkqJAUvXhYG52/rI3OyZ6LkzY6J3suTtronOy5uNFG5/9ZISkqJEWFpKiQFBWSokJSVEiKvr5/IOmfCklRISkqJEWFpKiQFBWSokJS9OJSG52TPRcnbXRO9lyctNE52XNx0kbnZM/FjTY6J3subrTROdlz8aQ2Oid7Lm600TnZc/GkQlJUSIoKSVEhKSokRYWkqJAUfX3/4IO10bmx5+JGG50bey5O2ujc2HNx0kbnZM/FSRudkz0XN9ronOy5OGmjc7Ln4kYhKSokRYWkqJAUFZKiQlJUSIpevFkbnRt7Lm600TnZc/GkPRcnbXSe1EbnnfZcnLTROdlz8aRCUlRIigpJUSEpKiRFhaSokBR9ff/gg7XROdlz8aQ2Ojf2XJy00XmnPRcnbXRu7Ln4zQpJUSEpKiRFhaSokBQVkqJCUvTil2ujc7Ln4qSNzsmeixttdE72XJy00TnZc3HSRuekjc6NPRcnbXRO9lyctNG5sefiRiEpKiRFhaSokBQVkqJCUlRIir6+f6D/rI3OyZ6LT9ZG58aei5M2Ou+05+JGISkqJEWFpKiQFBWSokJSVEiKXlxqo/OX7bk42XPxTm10TvZcnOy5uNFG58aeixttdJ5USIoKSVEhKSokRYWkqJAUFZKiFw/bc/HJ2ug8qY3OjT0XJ3subrTRubHn4kYbnRt7Lp5USIoKSVEhKSokRYWkqJAUFZKiF2/WRudJey6e1EbnZM/Fk9ronOy5uLHn4pO10TnZc3GjkBQVkqJCUlRIigpJUSEpKiRFL3Rlz8WT2uic7Lk4aaNzsufipI3OyZ6Ld9pz8aRCUlRIigpJUSEpKiRFhaSokBS90JU2Or9ZG52TPRcnbXSetOfipI3OyZ6LG4WkqJAUFZKiQlJUSIoKSVEhKXrxZnsufrM9FydtdJ7URufGnouTNjoney6e1EbnnQpJUSEpKiRFhaSokBQVkqJCUvTiYW10/rI2Ou+05+Kkjc5JG52TPRcnbXRO9lyctNE52XNx0kbnSYWkqJAUFZKiQlJUSIoKSVEhKfr6/oGkfyokRYWkqJAUFZKiQlJUSIoKSVEhKSokRYWkqJAUFZKiQlJUSIoKSdH/APpwGKQAcQYlAAAAAElFTkSuQmCC" alt="QR code for DM-8-001" />
+      <div class="unit">Unit 8-1-1</div>
+      <div class="qr-code-text">DM-8-001</div>
+      <div class="divider">
+        <div class="instructions">
+          Imbas kod ini untuk hantar kitar semula<br>
+          Scan to submit recycling
+        </div>
+        <div class="app-url">localhost:3000</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">♻️ Waste2Points</div>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAAAklEQVR4AewaftIAAARlSURBVO3B0XFjOxIFwVIHzQBsgP9mtA2AH7NjwDv4mBsMStrK/PrzF5L+UyEpKiRFhaSokBQVkqJCUlRIigpJUSEpKiRFhaSokBQVkqJCUlRIil48NNbkNzu9eWKsyc3pzc1Yk5vTmyfGmvxmpzdPFJKiQlJUSIoKSVEhKSokRYWk6MWbnd58Z2NN3un05masyRNjTW5Ob544vfnOxpq8UyEpKiRFhaSokBQVkqJCUlRIil582FiTdzq9eaexJjenNzenNzdjTb6zsSbvdHrzSYWkqJAUFZKiQlJUSIoKSVEhKXqhjxprcnN6o88pJEWFpKiQFBWSokJSVEiKCknRC73VWJOb05ubsSZPnN7o3xWSokJSVEiKCklRISkqJEWFpOjFh53e/GanN0+c3tyMNfmk05vfrJAUFZKiQlJUSIoKSVEhKSokRS/ebKyJsrEmN6c3nzTW5P9ZISkqJEWFpKiQFBWSokJSVEiKXjx0eqNsrMnN6c3NWJN3Or1RVkiKCklRISkqJEWFpKiQFBWSohcPjTW5Ob25GWvynZ3e3JzePDHW5Ob05masyRNjTb6z05tPKiRFhaSokBQVkqJCUlRIigpJ0Ys3G2vySac3T4w1uTm9+clOb27Gmtyc3tyMNbk5vbkZa/LE6c0ThaSokBQVkqJCUlRIigpJUSEp+vrzFx801uTm9OZmrMlPdnpzM9bk5vTmZqzJzenNE2NNbk5vnhhr8sTpzROFpKiQFBWSokJSVEiKCklRISn6+vMXD4w1uTm9uRlrcnN688RYk5vTmyfGmrzT6c0njTX5zk5v3qmQFBWSokJSVEiKCklRISkqJEUvHjq9uRlrcnN6czPW5InTm5uxJjenN+90enMz1uTm9OZmrMnN6c3N6c3NWJMnTm9uxpp8UiEpKiRFhaSokBQVkqJCUlRIir7+/IX+2ViTm9Obm7EmP9npzSeNNbk5vXmikBQVkqJCUlRIigpJUSEpKiRFLx4aa/Kbnd7cnN680+nNzViTm9Obm7Em7zTW5Ob05onTm3cqJEWFpKiQFBWSokJSVEiKCknRizc7vfnOxpo8MdbkncaaPDHWRP+ukBQVkqJCUlRIigpJUSEpKiRFLz5srMk7nd78ZKc3N2NNbk5vnhhr8sTpzc1YkydOb96pkBQVkqJCUlRIigpJUSEpKiRFL/RWpzc/2enNE2NNbk5vvrNCUlRIigpJUSEpKiRFhaSokBS90FuNNbk5vbkZa3JzenMz1uTm9OZmrMnN6c0TY01uTm8+qZAUFZKiQlJUSIoKSVEhKSokRS8+7PTmJzu9uRlrcjPW5Ob05onTm99srMnN6c0ThaSokBQVkqJCUlRIigpJUSEpevFmY01+s7EmT5ze3Iw1uTm9uRlrcnN6806nNzdjTZ44vXmnQlJUSIoKSVEhKSokRYWkqJAUff35C0n/qZAUFZKiQlJUSIoKSVEhKSokRYWkqJAUFZKiQlJUSIoKSVEhKSokRf8Dx1wXA1xviQAAAAAASUVORK5CYII=" alt="QR code for DM-8-002" />
+      <div class="unit">Unit 8-1-2</div>
+      <div class="qr-code-text">DM-8-002</div>
+      <div class="divider">
+        <div class="instructions">
+          Imbas kod ini untuk hantar kitar semula<br>
+          Scan to submit recycling
+        </div>
+        <div class="app-url">localhost:3000</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">♻️ Waste2Points</div>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAAAklEQVR4AewaftIAAAQwSURBVO3B0XFkKRQFwdKNNgNswH8zsAH80I4Be/gY4kW3NJX59f0Hkv5XISkqJEWFpKiQFBWSokJSVEiKCklRISkqJEWFpKiQFBWSokJSVEiKXlxqo/Ob7bl4Uhudkz0XT2qj85vtubhRSIoKSVEhKSokRYWkqJAUFZKiFw/bc/HJ2ui8056LG210TvZc3Nhz8cna6DypkBQVkqJCUlRIigpJUSEpKiRFL96sjc6T9lw8qY3OyZ6LkzY6P1kbnSftuXinQlJUSIoKSVEhKSokRYWkqJAUvdCj2ujc2HOh9ykkRYWkqJAUFZKiQlJUSIoKSdELPWrPxUkbnZM2Ojf2XOjvFZKiQlJUSIoKSVEhKSokRYWk6MWb7bn4zdro3NhzcdJG5532XPxmhaSokBQVkqJCUlRIigpJUSEpevGwNjr/sj0XJ210PlkbnX9ZISkqJEWFpKiQFBWSokJSVEiKXlzac6G/t+fipI3Ok/ZcKCskRYWkqJAUFZKiQlJUSIoKSdGLS210TvZcnLTR+WR7Lk72XDxpz8VJG50bbXQ+2Z6LdyokRYWkqJAUFZKiQlJUSIoKSdGLS3subuy5+GRtdJ605+Kd9lyctNE52XNx0kbnZM/FSRudG3subhSSokJSVEiKCklRISkqJEWFpOjFpTY6T9pz8aQ2Ojf2XJy00bnRRudkz8VJG52TPRcney5O2uic7Ln4yQpJUSEpKiRFhaSokBQVkqJCUvT1/QcfrI3Ok/Zc3Gijc7Ln4qSNzsmei3dqo/PJ9lw8qZAUFZKiQlJUSIoKSVEhKSokRV/ff/CgNjo39lzcaKPzyfZcnLTROdlzcdJG52TPxY02Ojf2XJy00TnZc/GkQlJUSIoKSVEhKSokRYWkqJAUfX3/gf5aG52TPRcnbXR+sj0X79RG52TPxY1CUlRIigpJUSEpKiRFhaSokBS9uNRG5zfbc3Gy5+JJey5O2uic7Lk4aaPzpDY6J3subuy5eFIhKSokRYWkqJAUFZKiQlJUSIpePGzPxSdro3Ojjc6NPRcnbXRutNHR3yskRYWkqJAUFZKiQlJUSIoKSdGLN2uj86Q9Fz/ZnouTNjoney5utNE5aaNzsufipI3OjT0XTyokRYWkqJAUFZKiQlJUSIoKSdEL6WDPxY02Oid7Lj5ZISkqJEWFpKiQFBWSokJSVEiKXuit2ujc2HNx0kbnZM/FSRudkz0XN9ronOy5eKdCUlRIigpJUSEpKiRFhaSokBS9eLM9Fz/ZnotPtufiN2ujc7Ln4kYhKSokRYWkqJAUFZKiQlJUSIpePKyNzm/WRued9lyctNE52XPxpD0XJ210buy5eFIhKSokRYWkqJAUFZKiQlJUSIq+vv9A0v8qJEWFpKiQFBWSokJSVEiKCklRISkqJEWFpKiQFBWSokJSVEiKCknRf9D0+/S9G8Z9AAAAAElFTkSuQmCC" alt="QR code for DM-8-003" />
+      <div class="unit">Unit 8-2-1</div>
+      <div class="qr-code-text">DM-8-003</div>
+      <div class="divider">
+        <div class="instructions">
+          Imbas kod ini untuk hantar kitar semula<br>
+          Scan to submit recycling
+        </div>
+        <div class="app-url">localhost:3000</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">♻️ Waste2Points</div>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAAAklEQVR4AewaftIAAARUSURBVO3B0ZFbOxIFwVIHzQBsgP9mwAa0H1oZ8A4+dINBarYyf/3+A0n/qZAUFZKiQlJUSIoKSVEhKSokRYWkqJAUFZKiQlJUSIoKSVEhKSokRS8eGmvyk/U+vNNYk3fqfbgZa/KT9T48UUiKCklRISkqJEWFpKiQFBWSohdv1vvwzcaafFLvw81Yk0/qffhmY03eqZAUFZKiQlJUSIoKSVEhKSokRS8+bKzJO/U+vNNYk5veh5uxJv+ysSbv1PvwSYWkqJAUFZKiQlJUSIoKSVEhKXqhf1rvg96nkBQVkqJCUlRIigpJUSEpKiRFL/RWY01ueh9uxprcjDW56X3Q3yskRYWkqJAUFZKiQlJUSIoKSdGLD+t9+Ml6H57ofbgZa/JJvQ8/WSEpKiRFhaSokBQVkqJCUlRIil682VgTZWNNbnofPmmsyf+zQlJUSIoKSVEhKSokRYWkqJAUvXio90F/r/fhZqzJO/U+KCskRYWkqJAUFZKiQlJUSIoKSdGLh8aa3PQ+3Iw1+Wa9Dze9D+/U+3Az1uSJsSbfrPfhkwpJUSEpKiRFhaSokBQVkqJCUvTizcaaPNH78M3Gmtz0PtyMNbnpfXin3oebsSY3vQ83Y01ueh9uxpo80fvwRCEpKiRFhaSokBQVkqJCUlRIil68We/DzViTm7EmT/Q+3Iw1uel9+KSxJje9DzdjTW56H256H27Gmtz0PvzLCklRISkqJEWFpKiQFBWSokJS9Ov3H7zRWJMneh9uxpo80ftwM9bknXofvtlYk2/W+/BOhaSokBQVkqJCUlRIigpJUSEpevHQWJOb3ocnxprc9D7cjDW5GWvyRO/DzViTJ8aa3PQ+3Iw1uel9uOl9uBlr8kTvw81Yk08qJEWFpKiQFBWSokJSVEiKCknRr99/oL821uSm9+GJsSbfrPfhk8aa3PQ+PFFIigpJUSEpKiRFhaSokBQVkqJfv//ggbEmP1nvwxNjTW56H54Ya3LT+3Az1uSJ3oebsSY3vQ/frJAUFZKiQlJUSIoKSVEhKSokRS/erPfhm401eWKsyRNjTd5prIn+XiEpKiRFhaSokBQVkqJCUlRIil582FiTd+p9+KTeh3caa3LT+/DEWJMneh9uxpo80fvwToWkqJAUFZKiQlJUSIoKSVEhKXqhjxprctP78M3GmjzR+/DNCklRISkqJEWFpKiQFBWSokJS9EJvNdbkpvfhZqzJTe/DzViTm96HJ3ofbsaa3Iw1uel9+KRCUlRIigpJUSEpKiRFhaSokBS9+LDeh39Z78PNWJObsSY3vQ9P9D78ZGNNbnofnigkRYWkqJAUFZKiQlJUSIoKSdGLNxtr8pONNbnpfXhirMlN78PNWJOb3od36n24GWvyRO/DOxWSokJSVEiKCklRISkqJEWFpOjX7z+Q9J8KSVEhKSokRYWkqJAUFZKiQlJUSIoKSVEhKSokRYWkqJAUFZKiQlL0P2aeB3OEDUe4AAAAAElFTkSuQmCC" alt="QR code for DM-8-004" />
+      <div class="unit">Unit 8-2-2</div>
+      <div class="qr-code-text">DM-8-004</div>
+      <div class="divider">
+        <div class="instructions">
+          Imbas kod ini untuk hantar kitar semula<br>
+          Scan to submit recycling
+        </div>
+        <div class="app-url">localhost:3000</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">♻️ Waste2Points</div>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAAAklEQVR4AewaftIAAARjSURBVO3B0ZEcORIFwWBaiwHIAP3FgAxIPXgU4B4+tqysZ7nh/uv3H0j6vwpJUSEpKiRFhaSokBQVkqJCUlRIigpJUSEpKiRFhaSokBQVkqJCUvThobEmf7PehyfGmtz0Pjwx1uSm9+FmrMnfrPfhiUJSVEiKCklRISkqJEWFpKiQFH14We/DTzbW5E29DzdjTW56H76p9+EnG2vypkJSVEiKCklRISkqJEWFpKiQFH34srEmb+p9eNNYk5veh5veh5uxJj/ZWJM39T58UyEpKiRFhaSokBQVkqJCUlRIij7oVWNN3tT7oPcUkqJCUlRIigpJUSEpKiRFhaTog17V+3Az1uSJsSY3vQ/65wpJUSEpKiRFhaSokBQVkqJCUvThy3of/mZjTZ7ofbgZa/JNvQ9/s0JSVEiKCklRISkqJEWFpKiQFH142ViT/7Leh5uxJj/ZWJP/skJSVEiKCklRISkqJEWFpKiQFH14qPdB2ViTm96Hm7Emb+p9UFZIigpJUSEpKiRFhaSokBQVkqIPD401uel9uBlr8pP1Ptz0Pjwx1uSm9+FmrMkTY01+st6HbyokRYWkqJAUFZKiQlJUSIoKSdGHh3ofnuh9uBlr8kTvwzeNNbnpffim3oebsSY3vQ83Y01ueh9uxpo80fvwRCEpKiRFhaSokBQVkqJCUlRIij68bKzJm3ofbsaaPNH78ETvw81Ykyd6H27Gmtz0Ptz0PtyMNbnpffg3KyRFhaSokBQVkqJCUlRIigpJ0YeHxpo80ftwM9bkTb0PN2NNnuh9uOl9eFPvwxNjTZ4Ya/Km3oc3FZKiQlJUSIoKSVEhKSokRYWk6MPLeh9uxprc9D7cjDW56X24GWty0/vwxFiTm96Hm7EmN70PN2NNbnofbnofbsaaPNH7cDPW5JsKSVEhKSokRYWkqJAUFZKiQlL06/cf6B8ba3LT+/DEWJOfrPfhm8aa3PQ+PFFIigpJUSEpKiRFhaSokBQVkqJfv//ggbEmf7PehyfGmtz0Pjwx1uSm9+FmrMkTvQ83Y01ueh9+skJSVEiKCklRISkqJEWFpKiQFH14We/DTzbW5ImxJm8aa/LEWBP9c4WkqJAUFZKiQlJUSIoKSVEhKfrwZWNN3tT78E29DzdjTW56H27Gmtz0Pjwx1uRmrMlN78PNWJMneh/eVEiKCklRISkqJEWFpKiQFBWSog961ViT/7KxJje9Dz9ZISkqJEWFpKiQFBWSokJSVEiKPuhHG2ty0/twM9bkpvfhid6Hm7EmN2NNbnofvqmQFBWSokJSVEiKCklRISkqJEUfvqz34d+s9+En6334m401uel9eKKQFBWSokJSVEiKCklRISkqJEUfXjbW5G821uSm9+FmrMkTvQ83Y01ueh/e1PtwM9bkid6HNxWSokJSVEiKCklRISkqJEWFpOjX7z+Q9H8VkqJCUlRIigpJUSEpKiRFhaSokBQVkqJCUlRIigpJUSEpKiRFhaTof2m7ENr1EpxiAAAAAElFTkSuQmCC" alt="QR code for DM-8-005" />
+      <div class="unit">Unit 8-3-1</div>
+      <div class="qr-code-text">DM-8-005</div>
+      <div class="divider">
+        <div class="instructions">
+          Imbas kod ini untuk hantar kitar semula<br>
+          Scan to submit recycling
+        </div>
+        <div class="app-url">localhost:3000</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

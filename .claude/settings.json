@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(zip -r ~/Desktop/mentari-design-files.zip app/globals.css app/layout.tsx app/page.tsx app/scan app/points app/redeem app/admin components/ postcss.config.mjs next.config.ts)",
+      "Bash(npm run *)",
+      "Bash(npx next *)",
+      "Bash(node_modules/.bin/next build *)",
+      "Bash(npm install *)",
+      "Bash(node_modules/.bin/prisma generate *)",
+      "Bash(node_modules/.bin/next dev *)"
+    ]
+  }
+}

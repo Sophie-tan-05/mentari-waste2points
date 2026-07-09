@@ -34,10 +34,16 @@ export async function POST(request: NextRequest) {
     data: { status: 'rejected', rejectedAt: new Date() },
   })
 
-  const updated = await prisma.household.update({
-    where: { id: scan.householdId },
-    data: { points: { decrement: scan.pointsEarned } },
-  })
+  // Only deduct points if scan was already approved (points were already credited).
+  // Pending scans never had points added, so no deduction needed.
+  let newHouseholdTotal = scan.household.points
+  if (scan.status === 'approved') {
+    const updated = await prisma.household.update({
+      where: { id: scan.householdId },
+      data: { points: { decrement: scan.pointsEarned } },
+    })
+    newHouseholdTotal = updated.points
+  }
 
-  return Response.json({ success: true, newHouseholdTotal: updated.points })
+  return Response.json({ success: true, newHouseholdTotal })
 }

@@ -2,6 +2,11 @@ import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db'
 import { REWARDS } from '@/lib/rewards'
 
+const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+function generateCode(): string {
+  return 'V' + Array.from({ length: 9 }, () => CHARS[Math.floor(Math.random() * CHARS.length)]).join('')
+}
+
 export async function POST(request: NextRequest) {
   let body: { qrCode?: string; rewardKey?: string }
   try {
@@ -29,21 +34,32 @@ export async function POST(request: NextRequest) {
     return Response.json({ success: false, error: 'Mata tidak cukup / Insufficient points' }, { status: 400 })
   }
 
-  await prisma.redemption.create({
-    data: {
-      householdId: household.id,
-      rewardKey,
-      pointsCost: reward.points,
-    },
-  })
+  // Generate a unique voucher code (retry on collision)
+  let code = generateCode()
+  let attempts = 0
+  while (attempts < 5) {
+    const exists = await prisma.voucher.findUnique({ where: { code } })
+    if (!exists) break
+    code = generateCode()
+    attempts++
+  }
 
-  await prisma.household.update({
-    where: { id: household.id },
-    data: { points: { decrement: reward.points } },
-  })
+  await prisma.$transaction([
+    prisma.voucher.create({
+      data: {
+        code,
+        householdId: household.id,
+        rewardKey,
+        rewardLabel: reward.label,
+        pointsCost:  reward.points,
+        status:      'active',
+      },
+    }),
+    prisma.household.update({
+      where: { id: household.id },
+      data:  { points: { decrement: reward.points } },
+    }),
+  ])
 
-  return Response.json({
-    success: true,
-    newTotal: household.points - reward.points,
-  })
+  return Response.json({ success: true, voucherCode: code })
 }

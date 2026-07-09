@@ -1,10 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { useLang } from '@/components/LanguageProvider'
 import QRInput from '@/components/QRInput'
 import { REWARDS } from '@/lib/rewards'
 import { t } from '@/lib/lang'
+
+const MapView = dynamic(() => import('@/components/MapView'), { ssr: false })
 
 /* ─────────────────────────────────────────────
    SVG / Decoration primitives
@@ -90,6 +93,8 @@ function PhotoSlot({ label, rounded = 0 }: { label: string; rounded?: number }) 
 
 const ICON_PATHS: Record<string, string> = {
   qr:      'M3 3h7v7H3V3zm2 2v3h3V5H5zm9-2h7v7h-7V3zm2 2v3h3V5h-3zM3 14h7v7H3v-7zm2 2v3h3v-3H5zm11-2h2v2h-2v-2zm3 0h2v2h-2v-2zm-3 3h2v2h-2v-2zm3 0h2v2h-2v-2zm-3 3h5v2h-5v-2z',
+  camera:  'M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM19 3h-2.4l-1.5-2H8.9L7.4 3H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10z',
+  play:    'M8 5v14l11-7z',
   scale:   'M12 3a2 2 0 0 1 1.94 1.5H20v2h-2.26l2.2 5.5a3.5 3.5 0 1 1-6.88 0L15.26 6.5H13v12h4v2H7v-2h4v-12H8.74l2.2 5.5a3.5 3.5 0 1 1-6.88 0L6.26 6.5H4v-2h6.06A2 2 0 0 1 12 3z',
   coin:    'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm.9 3h-1.8v1.1c-1.2.2-2 1-2 2.1 0 1.3 1 1.9 2.3 2.2 1 .2 1.3.5 1.3.9 0 .4-.4.7-1 .7-.8 0-1.3-.4-1.4-1H7.5c.1 1.1.9 1.9 2.1 2.1V18h1.8v-1.1c1.3-.2 2.1-1 2.1-2.2 0-1.3-.9-1.9-2.4-2.2-.9-.2-1.2-.4-1.2-.8s.3-.6.9-.6c.7 0 1.1.3 1.2.9h1.8c-.1-1-.8-1.8-1.9-2V7z',
   recycle: 'M12 2 9 7h2v4h2V7h2l-3-5zm-7.5 9L2 16l1.8 3.1A2 2 0 0 0 5.5 20H9v-2H5.5l-1.2-2 1.5-2.6-1.3-2.4zm15 0-1.3 2.4 1.5 2.6-1.2 2H15v2h3.5a2 2 0 0 0 1.7-.9L22 16l-2.5-5z',
@@ -126,19 +131,24 @@ function Kicker({ children, color = '#EE8A3B' }: { children: React.ReactNode; co
 
 const STEPS = [
   {
-    n: '01', icon: 'qr',
-    en: { title: 'Scan your QR card', body: 'Every household has a QR card tied to its block & unit. Scan it at the drop-off point to begin.' },
-    ms: { title: 'Imbas kad QR anda', body: 'Setiap rumah ada kad QR mengikut blok & unit. Imbas di pusat kutipan untuk mula.' },
+    n: '01', icon: 'scale',
+    en: { title: 'Weigh your recyclables', body: 'Place your clean plastics, paper, cans or glass on the scale and take note of the weight shown on the display.' },
+    ms: { title: 'Timbang bahan kitar semula', body: 'Letakkan plastik, kertas, tin atau kaca yang bersih di atas penimbang dan catat berat yang ditunjukkan.' },
   },
   {
-    n: '02', icon: 'scale',
-    en: { title: 'Weigh your recyclables', body: 'Hand over your clean plastics, paper, cans or glass. We weigh them in front of you — no guesswork.' },
-    ms: { title: 'Timbang bahan kitar semula', body: 'Serahkan plastik, kertas, tin atau kaca yang bersih. Kami timbang di depan anda — tiada tekaan.' },
+    n: '02', icon: 'camera',
+    en: { title: 'Photograph your items on the scale', body: 'Take a clear, well-lit photo of your recyclables on the scale — make sure the weight reading on the display is fully visible in the frame.' },
+    ms: { title: 'Gambar bahan di atas penimbang', body: 'Ambil gambar yang jelas dan terang bagi bahan kitar semula di atas penimbang — pastikan bacaan berat pada paparan kelihatan sepenuhnya dalam gambar.' },
   },
   {
-    n: '03', icon: 'coin',
-    en: { title: 'Earn points instantly', body: 'You get 10 points for every kilo — doubled for the first 50 scans. Points land on your card on the spot.' },
-    ms: { title: 'Dapat mata serta-merta', body: 'Dapat 10 mata bagi setiap kilo — digandakan untuk 50 imbasan pertama. Mata terus masuk ke kad anda.' },
+    n: '03', icon: 'qr',
+    en: { title: 'Scan your QR card from home', body: 'Your QR card is issued to your unit — scan it at home using your phone camera for a faster, more reliable connection.' },
+    ms: { title: 'Imbas kad QR dari rumah', body: 'Kad QR anda ditetapkan untuk unit anda — imbas di rumah menggunakan kamera telefon untuk sambungan yang lebih pantas dan stabil.' },
+  },
+  {
+    n: '04', icon: 'coin',
+    en: { title: 'Earn points instantly', body: 'Points are credited to your card the moment your submission is received. No waiting — your rewards start right away.' },
+    ms: { title: 'Dapat mata serta-merta', body: 'Mata dikreditkan ke kad anda sebaik sahaja penghantaran diterima. Tiada menunggu — ganjaran anda bermula serta-merta.' },
   },
 ]
 
@@ -150,10 +160,10 @@ const STATS = [
 ]
 
 const LOCATIONS = [
-  { en: { name: 'Blok A–C Community Hall',      hours: 'Mon–Sat · 8am–12pm', tag: 'Busiest'     }, ms: { name: 'Dewan Komuniti Blok A–C',               hours: 'Isn–Sab · 8pg–12tgh', tag: 'Tersibuk'       } },
-  { en: { name: 'Pasar Pagi Car Park',           hours: 'Sunday · 7am–11am',  tag: 'Weekend'     }, ms: { name: 'Tempat Letak Kereta Pasar Pagi',         hours: 'Ahad · 7pg–11pg',    tag: 'Hujung minggu'  } },
-  { en: { name: 'Blok D–F Surau Walkway',        hours: 'Tue & Fri · 5pm–7pm', tag: 'Evening'   }, ms: { name: 'Laluan Surau Blok D–F',                  hours: 'Sel & Jum · 5ptg–7ptg', tag: 'Petang'      } },
-  { en: { name: 'Taman Sri Indah Guardhouse',    hours: 'Daily · 9am–6pm',    tag: 'Drive-thru'  }, ms: { name: 'Pondok Pengawal Taman Sri Indah',         hours: 'Setiap hari · 9pg–6ptg', tag: 'Pandu lalu'  } },
+  { lat: 3.0895, lon: 101.6370, address: 'Jalan PJS 5/4, Taman Desa Mentari, 46150 Petaling Jaya, Selangor',                                                        en: { name: 'Desa Mentari Blok 8 Community Hall', hours: 'Mon–Sat · 8am–12pm', tag: 'Main Hub'  }, ms: { name: 'Dewan Komuniti Desa Mentari Blok 8', hours: 'Isn–Sab · 8pg–12tgh',   tag: 'Hub Utama'   } },
+  { lat: 3.0880, lon: 101.6378, address: '13-1, Jalan PJS 6/5F, Taman Desa Mentari, 46000 Petaling Jaya, Selangor',                                                  en: { name: 'KK Super Mart Desa Mentari',         hours: 'Daily · 8am–10pm',   tag: 'Drop-off'  }, ms: { name: 'KK Super Mart Desa Mentari',          hours: 'Setiap hari · 8pg–10mlm', tag: 'Titik kutip' } },
+  { lat: 3.0874, lon: 101.6383, address: 'Jalan PJS 6/6B, PJS 6, 46150 Petaling Jaya, Selangor',                                                                     en: { name: '99 Speedmart Desa Mentari',           hours: 'Daily · 7am–11pm',   tag: 'Drop-off'  }, ms: { name: '99 Speedmart Desa Mentari',            hours: 'Setiap hari · 7pg–11mlm', tag: 'Titik kutip' } },
+  { lat: 3.0910, lon: 101.6395, address: 'No.27 & 29 (Ground Floor), Blok A, Dataran Mentari, Jalan PJS 8/12, Dataran Mentari, 46150 Petaling Jaya, Selangor',       en: { name: 'ECONSAVE Mart Dataran Mentari',       hours: 'Daily · 9am–9pm',    tag: 'Drop-off'  }, ms: { name: 'ECONSAVE Mart Dataran Mentari',        hours: 'Setiap hari · 9pg–9mlm',  tag: 'Titik kutip' } },
 ]
 
 const ACCEPTED = [
@@ -303,11 +313,22 @@ function HeroSection({ lang }: { lang: string }) {
         </div>
       </div>
 
-      {/* Torn band + B&W photo */}
+      {/* Torn band + hero photo */}
       <div className="relative mt-[18px]">
         <TornEdge color="#59AE4F" height={84} />
-        <div className="bg-torn" style={{ height: 'clamp(220px,30vw,380px)' }}>
-          <PhotoSlot label={t('B&W waste photo', 'Foto sisa hitam-putih', lang)} />
+        <div className="w-full py-12 px-6 flex justify-center" style={{ backgroundColor: '#2E7D32' }}>
+          <div className="w-full max-w-3xl">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={lang === 'ms' ? '/media/images/BM1.png' : '/media/images/English1.png'}
+              alt="Recycling waste"
+              className="w-full h-auto block"
+              style={{
+                mixBlendMode: 'lighten',
+                filter: lang === 'ms' ? 'none' : 'contrast(2.2) brightness(1.15)',
+              }}
+            />
+          </div>
         </div>
       </div>
     </section>
@@ -319,29 +340,64 @@ function HowItWorksSection({ lang }: { lang: string }) {
     <section className="max-w-[1160px] mx-auto px-6 py-24 max-[720px]:py-16" id="about">
       <SectionHead
         kicker={t('How it works', 'Cara ia berfungsi', lang)}
-        title={t('Three steps to your first reward', 'Tiga langkah ke hadiah pertama', lang)}
+        title={t('Four steps to your first reward', 'Empat langkah ke hadiah pertama', lang)}
         kickColor="#F0609E"
         center
       />
-      <div className="grid gap-[22px] max-[940px]:grid-cols-1 min-[941px]:grid-cols-3">
-        {STEPS.map(step => {
-          const copy = lang === 'ms' ? step.ms : step.en
-          return (
-            <article
-              key={step.n}
-              className="relative bg-white rounded-[22px] p-[30px] border-[2.5px] border-ink shadow-[5px_5px_0_#1B2E1C] hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[7px_7px_0_#1B2E1C] transition-all duration-200"
-            >
-              <span className="absolute top-[22px] right-6 font-display text-[2.6rem] text-paper-2 leading-none select-none">
-                {step.n}
+      <div className="grid gap-10 min-[941px]:grid-cols-2 items-start">
+
+        {/* Steps list */}
+        <div className="flex flex-col gap-4">
+          {STEPS.map(step => {
+            const copy = lang === 'ms' ? step.ms : step.en
+            return (
+              <article
+                key={step.n}
+                className="bg-white rounded-[20px] p-[22px] border-[2.5px] border-ink shadow-[4px_4px_0_#1B2E1C] hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[6px_6px_0_#1B2E1C] transition-all duration-200 flex items-start gap-4"
+              >
+                <span className="grid place-items-center w-12 h-12 rounded-[14px] bg-green-pale text-green shrink-0 mt-0.5">
+                  <Icon name={step.icon} size={22} />
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-bold text-[.68rem] text-muted uppercase tracking-[.12em]">{step.n}</span>
+                  </div>
+                  <h3 className="font-display text-[1.18rem] leading-[1.2] mb-[6px] m-0">{copy.title}</h3>
+                  <p className="text-muted text-[.9rem] leading-[1.5] m-0">{copy.body}</p>
+                </div>
+              </article>
+            )
+          })}
+        </div>
+
+        {/* Video slot */}
+        <div className="min-[941px]:sticky min-[941px]:top-24">
+          <div className="rounded-[20px] overflow-hidden border-[2.5px] border-ink shadow-[5px_5px_0_#1B2E1C] bg-black aspect-video relative group">
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-full object-cover"
+              src="/media/videos/how-it-works.mp4"
+              onClick={e => {
+                const v = e.currentTarget
+                if (document.fullscreenElement) document.exitFullscreen()
+                else v.requestFullscreen()
+              }}
+            />
+            {/* Fullscreen hint — fades in on hover */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+              <span className="bg-black/50 text-white text-xs font-semibold px-3 py-1.5 rounded-lg backdrop-blur-sm">
+                {t('Click to fullscreen', 'Klik untuk skrin penuh', lang)}
               </span>
-              <span className="grid place-items-center w-14 h-14 rounded-[16px] bg-green-pale text-green mb-5">
-                <Icon name={step.icon} size={26} />
-              </span>
-              <h3 className="font-display text-2xl mb-[10px] m-0">{copy.title}</h3>
-              <p className="text-muted text-[.98rem] m-0">{copy.body}</p>
-            </article>
-          )
-        })}
+            </div>
+          </div>
+          <p className="text-muted text-sm text-center mt-3 font-semibold">
+            {t('Watch how it works', 'Tonton cara ia berfungsi', lang)}
+          </p>
+        </div>
+
       </div>
     </section>
   )
@@ -426,34 +482,43 @@ function ImpactSection({ lang }: { lang: string }) {
 }
 
 function LocationsSection({ lang }: { lang: string }) {
-  const dotColors = ['#F4C24B', '#F0609E', '#EE8A3B', '#4CAF50']
-
   return (
     <section className="max-w-[1160px] mx-auto px-6 py-24 max-[720px]:py-16" id="locations">
-      <div className="grid gap-14 max-[940px]:grid-cols-1 min-[941px]:grid-cols-2 items-start">
+      <SectionHead
+        kicker={t('Drop-off points', 'Pusat kutipan', lang)}
+        title={t('Find your nearest collection point', 'Cari pusat kutipan berdekatan', lang)}
+        kickColor="#EE8A3B"
+      />
+      <div className="grid gap-10 max-[940px]:grid-cols-1 min-[941px]:grid-cols-2 items-start mt-10">
         {/* Left: list */}
         <div>
-          <SectionHead
-            kicker={t('Drop-off points', 'Pusat kutipan', lang)}
-            title={t('Find your nearest collection point', 'Cari pusat kutipan berdekatan', lang)}
-            kickColor="#EE8A3B"
-          />
           <ul className="list-none m-0 p-0 flex flex-col gap-3">
             {LOCATIONS.map((l, i) => {
               const loc = lang === 'ms' ? l.ms : l.en
+              const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(l.address)}`
               return (
                 <li
                   key={i}
-                  className="flex items-center gap-4 bg-white border-[2.5px] border-ink shadow-[5px_5px_0_#1B2E1C] rounded-[16px] px-[18px] py-4"
+                  className="group flex items-start gap-4 bg-white border-[2.5px] border-ink rounded-[16px] px-[18px] py-4 shadow-[5px_5px_0_#1B2E1C] hover:shadow-[7px_7px_0_#1B2E1C] hover:-translate-x-[2px] hover:-translate-y-[2px] hover:bg-brand-green-pale transition-all duration-200 cursor-pointer"
                 >
-                  <span className="grid place-items-center w-[42px] h-[42px] rounded-[12px] bg-green-pale text-green shrink-0">
-                    <Icon name="pin" size={20} />
+                  <span className="grid place-items-center w-[36px] h-[36px] rounded-full bg-brand-green text-white font-bold text-[.9rem] shrink-0 mt-[2px] group-hover:scale-110 transition-transform duration-200">
+                    {i + 1}
                   </span>
-                  <div className="flex-1">
-                    <p className="font-bold text-base m-0">{loc.name}</p>
-                    <p className="text-muted text-[.88rem] m-0">{loc.hours}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-base m-0 leading-snug text-brand-charcoal">{loc.name}</p>
+                    <p className="text-muted text-[.82rem] m-0 mt-[2px]">{loc.hours}</p>
+                    <p className="text-muted text-[.75rem] m-0 mt-[2px] leading-snug">{l.address}</p>
+                    <a
+                      href={mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 mt-[8px] bg-brand-green text-white font-semibold text-[.72rem] px-[10px] py-[4px] rounded-[6px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-brand-green-mid"
+                      onClick={e => e.stopPropagation()}
+                    >
+                      🗺️ {t('Get directions', 'Dapatkan arah', lang)}
+                    </a>
                   </div>
-                  <span className="bg-paper-2 text-ink font-bold text-[.72rem] px-[11px] py-[5px] rounded-[8px] shrink-0">
+                  <span className="bg-brand-green-pale text-brand-green font-bold text-[.72rem] px-[10px] py-[4px] rounded-[8px] shrink-0 mt-[2px] group-hover:bg-brand-green group-hover:text-white transition-colors duration-200">
                     {loc.tag}
                   </span>
                 </li>
@@ -464,31 +529,38 @@ function LocationsSection({ lang }: { lang: string }) {
 
         {/* Right: map + accepted */}
         <div className="flex flex-col gap-[22px]">
-          {/* Map placeholder */}
-          <div className="relative h-[300px] rounded-[20px] overflow-hidden border-[2.5px] border-ink shadow-[5px_5px_0_#1B2E1C]">
-            <PhotoSlot
-              label={t('Neighbourhood map', 'Peta kawasan', lang)}
-              rounded={20}
-            />
-            {dotColors.map((color, i) => {
-              const positions = [
-                { top: '30%', left: '28%' },
-                { top: '52%', left: '60%' },
-                { top: '68%', left: '38%' },
-                { top: '40%', left: '78%' },
-              ]
-              return (
-                <span
-                  key={i}
-                  className="absolute w-4 h-4 rounded-full border-[3px] border-white z-[3]"
-                  style={{
-                    background: color,
-                    boxShadow: `0 0 0 3px ${color}4D`,
-                    ...positions[i],
-                  }}
-                />
-              )
-            })}
+          {/* Leaflet map card */}
+          <div className="rounded-[20px] overflow-hidden border-[2.5px] border-ink shadow-[5px_5px_0_#1B2E1C] bg-white">
+            {/* Header */}
+            <div className="flex items-center gap-2 px-4 py-3 bg-brand-green-pale border-b-[2px] border-ink">
+              <span className="text-lg">📍</span>
+              <p className="font-bold text-[.9rem] text-brand-charcoal m-0">
+                {t('4 Drop-off Points · Desa Mentari', '4 Titik Kutipan · Desa Mentari', lang)}
+              </p>
+            </div>
+            {/* Map — isolation:isolate traps Leaflet z-indexes inside this stacking context */}
+            <div style={{ height: 360, isolation: 'isolate' }}>
+              <MapView
+                locations={LOCATIONS.map((l, i) => ({
+                  lat: l.lat,
+                  lon: l.lon,
+                  name: lang === 'ms' ? l.ms.name : l.en.name,
+                  address: l.address,
+                  tag: lang === 'ms' ? l.ms.tag : l.en.tag,
+                }))}
+                center={[3.0888, 101.6380]}
+                zoom={16}
+              />
+            </div>
+            {/* Legend */}
+            <div className="flex flex-wrap gap-2 px-4 py-3 border-t-[2px] border-ink bg-brand-green-pale">
+              {LOCATIONS.map((l, i) => (
+                <span key={i} className="flex items-center gap-1 text-[.72rem] font-semibold text-brand-charcoal">
+                  <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-brand-green text-white font-bold text-[.65rem]">{i + 1}</span>
+                  {lang === 'ms' ? l.ms.name : l.en.name}
+                </span>
+              ))}
+            </div>
           </div>
 
           {/* Accepted materials */}
@@ -500,7 +572,7 @@ function LocationsSection({ lang }: { lang: string }) {
               {ACCEPTED.map((a, i) => (
                 <span
                   key={i}
-                  className="inline-flex items-center gap-[6px] bg-white border-[2.5px] border-ink text-green font-bold text-[.9rem] px-[14px] py-2 rounded-[8px]"
+                  className="inline-flex items-center gap-[6px] bg-white border-[2.5px] border-ink text-green font-bold text-[.9rem] px-[14px] py-2 rounded-[8px] hover:bg-brand-green hover:text-white hover:border-brand-green hover:shadow-[3px_3px_0_#1B2E1C] hover:-translate-y-[2px] transition-all duration-200 cursor-default"
                 >
                   <Icon name="check" size={14} />
                   {lang === 'ms' ? a.ms : a.en}

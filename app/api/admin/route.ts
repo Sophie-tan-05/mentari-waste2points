@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
       weightKg:     sc.weightKg,
       pointsEarned: sc.pointsEarned,
       photoUrl:     sc.photoUrl,
+      photoHash:    sc.photoHash,
       status:       sc.status,
       createdAt:    sc.createdAt,
     })),

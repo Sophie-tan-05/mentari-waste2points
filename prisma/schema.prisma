@@ -11,9 +11,11 @@ model Household {
   id          String       @id @default(cuid())
   qrCode      String       @unique
   unit        String
+  phone       String?      @unique
   points      Int          @default(0)
   scans       Scan[]
   redemptions Redemption[]
+  vouchers    Voucher[]
   createdAt   DateTime     @default(now())
 }
 
@@ -25,7 +27,8 @@ model Scan {
   weightKg     Float
   pointsEarned Int
   photoUrl     String
-  status       String    @default("approved")
+  photoHash    String?
+  status       String    @default("pending")
   rejectedAt   DateTime?
   createdAt    DateTime  @default(now())
 }
@@ -37,4 +40,26 @@ model Redemption {
   rewardKey   String
   pointsCost  Int
   redeemedAt  DateTime  @default(now())
+}
+
+model Voucher {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  household   Household @relation(fields: [householdId], references: [id])
+  householdId String
+  rewardKey   String
+  rewardLabel String
+  pointsCost  Int
+  status      String    @default("active")
+  redeemedAt  DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model ApprovalBatch {
+  id              String   @id @default(cuid())
+  weekLabel       String
+  truckWeightKg   Float
+  digitalWeightKg Float
+  scanCount       Int
+  approvedAt      DateTime @default(now())
 }

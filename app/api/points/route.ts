@@ -12,11 +12,16 @@ export async function GET(request: NextRequest) {
 
   if (!household) return Response.json({ error: 'Not found' }, { status: 404 })
 
+  const pendingPoints = household.scans
+    .filter(s => s.status === 'pending')
+    .reduce((sum, s) => sum + s.pointsEarned, 0)
+
   return Response.json({
     household: {
-      qrCode:  household.qrCode,
-      unit:    household.unit,
-      points:  household.points,
+      qrCode:        household.qrCode,
+      unit:          household.unit,
+      points:        household.points,
+      pendingPoints,
     },
     scans: household.scans.map(s => ({
       id:           s.id,

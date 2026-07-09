@@ -27,6 +27,7 @@ export default function RedeemPage() {
   const [selected, setSelected] = useState<Reward | null>(null)
   const [successReward, setSuccessReward] = useState<Reward | null>(null)
   const [newTotal, setNewTotal] = useState<number | null>(null)
+  const [voucherCode, setVoucherCode] = useState<string | null>(null)
   const [apiError, setApiError] = useState('')
 
   const fetchHousehold = useCallback(async () => {
@@ -60,7 +61,8 @@ export default function RedeemPage() {
     if (data.success) {
       setSuccessReward(selected)
       setNewTotal(data.newTotal)
-      setHousehold(h => h ? { ...h, points: data.newTotal } : h)
+      setVoucherCode(data.voucherCode ?? null)
+      setHousehold(h => h ? { ...h, points: data.newTotal ?? (h.points - selected.points) } : h)
       setPageState('success')
     } else {
       setApiError(data.error ?? 'Something went wrong')
@@ -107,40 +109,50 @@ export default function RedeemPage() {
           ← Home / Laman Utama
         </Link>
 
-        <div className="bg-brand-green-pale border border-brand-green-light rounded-2xl p-8 text-center animate-success">
-          <div className="text-6xl mb-4">✅</div>
+        <div className="bg-brand-green-pale border border-brand-green-light rounded-2xl p-6 text-center">
+          <div className="text-5xl mb-3">🎉</div>
           <h2 className="text-brand-charcoal text-xl font-bold mb-1">
-            {lang === 'ms' ? 'Tebus Berjaya!' : 'Redemption Successful!'}
+            {lang === 'ms' ? 'Baucar Berjaya Dijana!' : 'Voucher Generated!'}
           </h2>
           <p className="text-brand-muted text-sm mb-4">
-            {lang === 'ms'
-              ? `Anda telah menebus ${rewardLabel}`
-              : `You redeemed ${rewardLabel}`}
+            {lang === 'ms' ? `untuk ${rewardLabel}` : `for ${rewardLabel}`}
           </p>
 
-          {/* Confetti-style emoji burst */}
-          <div className="text-2xl mb-4 space-x-1">🎉 🎊 ♻️ 🎊 🎉</div>
+          {/* Voucher code highlight */}
+          {voucherCode && (
+            <div className="bg-white rounded-xl border-2 border-brand-green p-4 mb-4">
+              <p className="text-brand-muted text-xs mb-1">
+                {lang === 'ms' ? 'Kod Baucar Anda' : 'Your Voucher Code'}
+              </p>
+              <p className="text-brand-charcoal text-2xl font-bold tracking-widest">{voucherCode}</p>
+              <p className="text-brand-muted text-xs mt-2">
+                {lang === 'ms' ? 'Tunjukkan kod ini di kaunter Lotus\'s' : 'Show this at the Lotus\'s checkout'}
+              </p>
+            </div>
+          )}
 
-          {/* New balance */}
-          <div className="bg-white rounded-xl border border-brand-border p-4 mb-5">
-            <p className="text-brand-muted text-xs mb-1">
-              {lang === 'ms' ? 'Baki Mata' : 'Remaining Points'}
-            </p>
-            <p className="text-brand-green text-4xl font-bold">{newTotal ?? household.points}</p>
+          {/* Remaining points */}
+          <div className="bg-white rounded-xl border border-brand-border p-3 mb-5">
+            <p className="text-brand-muted text-xs mb-1">{lang === 'ms' ? 'Baki Mata' : 'Remaining Points'}</p>
+            <p className="text-brand-green text-3xl font-bold">{newTotal ?? household.points}</p>
           </div>
+
+          {/* View voucher button */}
+          {voucherCode && (
+            <Link
+              href={`/voucher/${voucherCode}`}
+              className="flex items-center justify-center w-full h-14 bg-brand-green text-white rounded-xl font-bold text-base mb-3 gap-2"
+            >
+              🎫 {lang === 'ms' ? 'Lihat Baucar Saya' : 'View My Voucher'}
+            </Link>
+          )}
 
           <button
             onClick={handleDone}
-            className="w-full h-14 bg-brand-green text-white rounded-xl font-bold text-base"
+            className="w-full h-12 border-2 border-brand-green text-brand-green rounded-xl font-semibold text-sm"
           >
-            {lang === 'ms' ? 'Tebus Lagi' : 'Redeem More'}
+            {lang === 'ms' ? 'Tebus Lagi' : 'Redeem Another'}
           </button>
-          <Link
-            href={`/points/${qrCode}`}
-            className="mt-3 flex items-center justify-center w-full h-12 border-2 border-brand-green text-brand-green rounded-xl font-semibold text-sm"
-          >
-            {lang === 'ms' ? 'Lihat Rekod' : 'View History'}
-          </Link>
         </div>
       </main>
     )

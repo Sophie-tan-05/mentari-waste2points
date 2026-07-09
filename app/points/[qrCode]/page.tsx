@@ -32,6 +32,7 @@ interface HouseholdData {
   qrCode: string
   unit: string
   points: number
+  pendingPoints: number
 }
 
 export default function PointsPage() {
@@ -85,6 +86,23 @@ export default function PointsPage() {
       </Link>
 
       <PointsBadge unit={household.unit} points={household.points} />
+
+      {/* Pending points banner */}
+      {household.pendingPoints > 0 && (
+        <div className="bg-amber-50 border border-amber-300 rounded-2xl p-4 flex items-start gap-3">
+          <span className="text-2xl shrink-0">⏳</span>
+          <div>
+            <p className="font-bold text-amber-800 text-sm m-0">
+              {lang === 'ms' ? `${household.pendingPoints} mata dalam semakan` : `${household.pendingPoints} pts pending approval`}
+            </p>
+            <p className="text-amber-700 text-xs m-0 mt-1 leading-snug">
+              {lang === 'ms'
+                ? 'Mata akan dikreditkan selepas ketua blok mengesahkan berat rasmi trak KDEB.'
+                : 'Points released once the committee verifies the official KDEB truck weight receipt.'}
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* History header */}
       <div className="flex items-center justify-between">
@@ -149,7 +167,11 @@ export default function PointsPage() {
 
                 {/* Status badge */}
                 <div className="mt-2 pt-2 border-t border-brand-border">
-                  {approved ? (
+                  {scan.status === 'pending' ? (
+                    <span className="text-xs text-amber-600 font-semibold">
+                      ⏳ {lang === 'ms' ? 'Menunggu kelulusan' : 'Pending approval'}
+                    </span>
+                  ) : approved ? (
                     <span className="text-xs text-brand-green font-semibold">
                       ✅ {lang === 'ms' ? 'Diluluskan' : 'Approved'}
                     </span>

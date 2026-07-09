@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { prisma } from '@/lib/db'
 import PointsBadge from '@/components/PointsBadge'
 import ScanForm from '@/components/ScanForm'
+import PhoneRegister from '@/components/PhoneRegister'
 
 export default async function ScanPage({
   params,
@@ -22,6 +23,11 @@ export default async function ScanPage({
       </Link>
 
       <PointsBadge unit={household.unit} points={household.points} />
+
+      {/* Phone registration prompt — shown only if no phone saved yet */}
+      {!household.phone && (
+        <PhoneRegister qrCode={qrCode} lang="en" />
+      )}
 
       {/* Form card */}
       <div className="bg-white rounded-2xl border border-brand-border p-5 shadow-sm">

@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server'
+import { createHash } from 'crypto'
 import { prisma } from '@/lib/db'
 import { calcPoints } from '@/lib/points'
 import { savePhoto } from '@/lib/photos'
@@ -40,6 +41,19 @@ async function handleScan(formData: FormData) {
   if (!photo || typeof photo === 'string' || (photo as File).size === 0)
     return Response.json({ success: false, error: 'Photo is required' })
 
+  // Compute SHA-256 hash of photo bytes
+  const photoBuffer = Buffer.from(await (photo as File).arrayBuffer())
+  const photoHash   = createHash('sha256').update(photoBuffer).digest('hex')
+
+  // Duplicate photo check — reject if same photo was ever submitted before
+  const duplicate = await prisma.scan.findFirst({ where: { photoHash } })
+  if (duplicate) {
+    return Response.json({
+      success: false,
+      error: 'Foto ini sudah pernah dihantar sebelum ini. Sila ambil gambar baru. / This photo was already submitted before. Please take a new photo.',
+    })
+  }
+
   // Save photo
   const photoUrl = await savePhoto(photo as File, qrCode)
 
@@ -47,7 +61,7 @@ async function handleScan(formData: FormData) {
   const totalScans = await prisma.scan.count({ where: { householdId: household.id } })
   const pointsEarned = calcPoints(weightKg, totalScans)
 
-  // Persist scan + update balance
+  // Persist scan as PENDING — points not added until committee approves the week
   await prisma.scan.create({
     data: {
       householdId:  household.id,
@@ -55,17 +69,14 @@ async function handleScan(formData: FormData) {
       weightKg,
       pointsEarned,
       photoUrl,
-      status: 'approved',
+      photoHash,
+      status: 'pending',
     },
-  })
-  await prisma.household.update({
-    where: { id: household.id },
-    data:  { points: { increment: pointsEarned } },
   })
 
   return Response.json({
     success: true,
     pointsEarned,
-    newTotal: household.points + pointsEarned,
+    status: 'pending',
   })
 }

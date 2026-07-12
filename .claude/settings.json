@@ -7,7 +7,22 @@
       "Bash(node_modules/.bin/next build *)",
       "Bash(npm install *)",
       "Bash(node_modules/.bin/prisma generate *)",
-      "Bash(node_modules/.bin/next dev *)"
+      "Bash(node_modules/.bin/next dev *)",
+      "Bash(git rebase *)",
+      "Bash(git fetch *)",
+      "Bash(git reset *)",
+      "Bash(vercel whoami *)",
+      "Bash(npx prisma *)",
+      "Bash(rm -f dev.db)",
+      "Bash(DATABASE_URL=\"file:./dev.db\" npx prisma migrate dev --name add_phone_photohash_vouchers_approvals)",
+      "Bash(DATABASE_URL=\"file:./dev.db\" npx prisma migrate dev --name add_phone_photohash_vouchers_approvals --create-only)",
+      "Bash(DATABASE_URL=\"file:./dev.db\" npx prisma migrate diff --from-migrations prisma/migrations --to-schema-datamodel prisma/schema.prisma --script)",
+      "Bash(DATABASE_URL=\"file:./dev.db\" npx prisma migrate diff --from-migrations prisma/migrations --to-schema prisma/schema.prisma --script)",
+      "Bash(git add *)"
+    ],
+    "additionalDirectories": [
+      "/tmp",
+      "/private/tmp"
     ]
   }
 }

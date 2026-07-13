@@ -18,7 +18,10 @@
       "Bash(DATABASE_URL=\"file:./dev.db\" npx prisma migrate dev --name add_phone_photohash_vouchers_approvals --create-only)",
       "Bash(DATABASE_URL=\"file:./dev.db\" npx prisma migrate diff --from-migrations prisma/migrations --to-schema-datamodel prisma/schema.prisma --script)",
       "Bash(DATABASE_URL=\"file:./dev.db\" npx prisma migrate diff --from-migrations prisma/migrations --to-schema prisma/schema.prisma --script)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git commit *)"
     ],
     "additionalDirectories": [
       "/tmp",

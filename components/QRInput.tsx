@@ -47,12 +47,20 @@ export default function QRInput({ lang }: Props) {
     setScanning(true)
     setError('')
     try {
-      const { Html5Qrcode } = await import('html5-qrcode')
-      const scanner = new Html5Qrcode('qr-scanner-container')
+      const { Html5Qrcode, Html5QrcodeSupportedFormats } = await import('html5-qrcode')
+      const scanner = new Html5Qrcode('qr-scanner-container', {
+        verbose: false,
+        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+        useBarCodeDetectorIfSupported: true,
+      })
       scannerRef.current = scanner
       await scanner.start(
         { facingMode: 'environment' },
-        { fps: 10, qrbox: { width: 240, height: 240 } },
+        {
+          fps: 10,
+          qrbox: { width: 240, height: 240 },
+          videoConstraints: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
+        },
         async (decoded: string) => {
           scannerRef.current = null
           try { await scanner.stop() } catch { /* already stopped */ }

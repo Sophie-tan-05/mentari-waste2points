@@ -22,7 +22,8 @@
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
       "Bash(git commit *)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(npm ls *)"
     ],
     "additionalDirectories": [
       "/tmp",

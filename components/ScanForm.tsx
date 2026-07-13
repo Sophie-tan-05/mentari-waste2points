@@ -39,7 +39,6 @@ interface Props {
 
 interface SuccessResult {
   pointsEarned: number
-  newTotal: number
 }
 
 export default function ScanForm({ qrCode }: Props) {
@@ -72,7 +71,7 @@ export default function ScanForm({ qrCode }: Props) {
       const res  = await fetch('/api/scan', { method: 'POST', body: fd })
       const data = await res.json()
       if (data.success) {
-        setResult({ pointsEarned: data.pointsEarned, newTotal: data.newTotal })
+        setResult({ pointsEarned: data.pointsEarned })
       } else {
         const msgs: Record<string, string> = {
           'QR not found':                   lang === 'ms' ? 'Kod QR tidak dijumpai.'                          : 'QR not found.',
@@ -93,14 +92,15 @@ export default function ScanForm({ qrCode }: Props) {
   if (result) {
     return (
       <div className="bg-brand-green-pale border border-brand-green-light rounded-2xl p-8 text-center space-y-3 animate-success">
-        <div className="text-6xl">✅</div>
+        <div className="text-6xl">⏳</div>
         <p className="text-brand-green text-5xl font-bold">+{result.pointsEarned}</p>
         <p className="text-brand-charcoal font-semibold text-lg">
-          {lang === 'ms' ? 'Mata diterima!' : 'Points earned!'}
+          {lang === 'ms' ? 'Dihantar! Menunggu kelulusan' : 'Submitted! Pending approval'}
         </p>
         <p className="text-brand-muted text-sm">
-          {lang === 'ms' ? 'Jumlah baharu' : 'New total'}:{' '}
-          <span className="font-bold text-brand-charcoal">{result.newTotal} pts</span>
+          {lang === 'ms'
+            ? 'Mata akan dikreditkan selepas ketua blok mengesahkan berat rasmi trak KDEB.'
+            : 'Points will be credited once the committee verifies the official KDEB truck weight receipt.'}
         </p>
         <div className="pt-2 flex flex-col gap-2">
           <Link

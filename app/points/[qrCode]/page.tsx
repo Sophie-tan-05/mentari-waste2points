@@ -28,12 +28,23 @@ interface Scan {
   createdAt: string
 }
 
+interface Voucher {
+  code: string
+  rewardLabel: string
+  pointsCost: number
+  status: string
+  createdAt: string
+  redeemedAt: string | null
+}
+
 interface HouseholdData {
   qrCode: string
   unit: string
   points: number
   pendingPoints: number
 }
+
+type Tab = 'recycling' | 'vouchers'
 
 export default function PointsPage() {
   const params  = useParams()
@@ -42,8 +53,10 @@ export default function PointsPage() {
 
   const [household, setHousehold] = useState<HouseholdData | null>(null)
   const [scans,     setScans]     = useState<Scan[]>([])
+  const [vouchers,  setVouchers]  = useState<Voucher[]>([])
   const [loading,   setLoading]   = useState(true)
   const [gone,      setGone]      = useState(false)
+  const [tab,       setTab]       = useState<Tab>('recycling')
 
   const fetchData = useCallback(async () => {
     const res = await fetch(`/api/points?qrCode=${encodeURIComponent(qrCode)}`)
@@ -52,6 +65,7 @@ export default function PointsPage() {
     const data = await res.json()
     setHousehold(data.household)
     setScans(data.scans)
+    setVouchers(data.vouchers ?? [])
     setLoading(false)
   }, [qrCode])
 
@@ -75,6 +89,9 @@ export default function PointsPage() {
       </main>
     )
   }
+
+  const activeVouchers   = vouchers.filter(v => v.status === 'active')
+  const redeemedVouchers = vouchers.filter(v => v.status === 'redeemed')
 
   return (
     <main className="max-w-md mx-auto px-4 py-6 space-y-5">
@@ -104,87 +121,221 @@ export default function PointsPage() {
         </div>
       )}
 
-      {/* History header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-brand-charcoal font-semibold text-base">
-          {lang === 'ms' ? 'Rekod Kitar Semula' : 'Recycling History'}
-        </h2>
-        <span className="text-brand-muted text-xs">
-          {scans.length} {lang === 'ms' ? 'rekod' : 'records'}
-        </span>
+      {/* Tab switcher */}
+      <div className="flex bg-brand-green-pale rounded-xl p-1 gap-1">
+        <button
+          onClick={() => setTab('recycling')}
+          className={`flex-1 h-10 rounded-lg text-sm font-semibold transition-all ${
+            tab === 'recycling'
+              ? 'bg-white text-brand-green shadow-sm'
+              : 'text-brand-muted'
+          }`}
+        >
+          ♻️ {lang === 'ms' ? 'Rekod Kitar' : 'Recycling'}
+          {scans.length > 0 && (
+            <span className="ml-1 bg-brand-green-light text-brand-green text-xs px-1.5 py-0.5 rounded-full">
+              {scans.length}
+            </span>
+          )}
+        </button>
+        <button
+          onClick={() => setTab('vouchers')}
+          className={`flex-1 h-10 rounded-lg text-sm font-semibold transition-all ${
+            tab === 'vouchers'
+              ? 'bg-white text-brand-green shadow-sm'
+              : 'text-brand-muted'
+          }`}
+        >
+          🎫 {lang === 'ms' ? 'Baucar Saya' : 'My Vouchers'}
+          {activeVouchers.length > 0 && (
+            <span className="ml-1 bg-brand-green text-white text-xs px-1.5 py-0.5 rounded-full">
+              {activeVouchers.length}
+            </span>
+          )}
+        </button>
       </div>
 
-      {/* Empty state */}
-      {scans.length === 0 && (
-        <div className="bg-white rounded-2xl border border-brand-border p-8 text-center shadow-sm">
-          <div className="text-5xl mb-3">📦</div>
-          <p className="text-brand-charcoal font-semibold mb-1">
-            {lang === 'ms' ? 'Belum ada rekod.' : 'No records yet.'}
-          </p>
-          <p className="text-brand-muted text-sm">
-            {lang === 'ms' ? 'Mula kitar semula hari ini!' : 'Start recycling today!'}
-          </p>
-          <Link
-            href={`/scan/${qrCode}`}
-            className="mt-4 inline-block bg-brand-green text-white px-6 py-3 rounded-xl font-semibold text-sm"
-          >
-            {lang === 'ms' ? 'Hantar Kitar Semula ♻️' : 'Submit Recycling ♻️'}
-          </Link>
-        </div>
-      )}
+      {/* ── RECYCLING TAB ── */}
+      {tab === 'recycling' && (
+        <>
+          <div className="flex items-center justify-between">
+            <h2 className="text-brand-charcoal font-semibold text-base">
+              {lang === 'ms' ? 'Rekod Kitar Semula' : 'Recycling History'}
+            </h2>
+            <span className="text-brand-muted text-xs">
+              {scans.length} {lang === 'ms' ? 'rekod' : 'records'}
+            </span>
+          </div>
 
-      {/* Scan history cards */}
-      {scans.length > 0 && (
-        <div className="space-y-3">
-          {scans.map(scan => {
-            const catKey  = scan.category as keyof typeof CATEGORIES
-            const cat     = CATEGORIES[catKey] ?? { icon: '♻️', en: scan.category, ms: scan.category }
-            const approved = scan.status === 'approved'
-
-            return (
-              <div
-                key={scan.id}
-                className="bg-white rounded-2xl border border-brand-border p-4 shadow-sm"
+          {scans.length === 0 && (
+            <div className="bg-white rounded-2xl border border-brand-border p-8 text-center shadow-sm">
+              <div className="text-5xl mb-3">📦</div>
+              <p className="text-brand-charcoal font-semibold mb-1">
+                {lang === 'ms' ? 'Belum ada rekod.' : 'No records yet.'}
+              </p>
+              <p className="text-brand-muted text-sm">
+                {lang === 'ms' ? 'Mula kitar semula hari ini!' : 'Start recycling today!'}
+              </p>
+              <Link
+                href={`/scan/${qrCode}`}
+                className="mt-4 inline-block bg-brand-green text-white px-6 py-3 rounded-xl font-semibold text-sm"
               >
-                {/* Top row: category + points pill */}
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">{cat.icon}</span>
-                    <span className="text-brand-charcoal font-semibold text-sm">
-                      {lang === 'ms' ? cat.ms : cat.en}
+                {lang === 'ms' ? 'Hantar Kitar Semula ♻️' : 'Submit Recycling ♻️'}
+              </Link>
+            </div>
+          )}
+
+          <div className="space-y-3">
+            {scans.map(scan => {
+              const catKey = scan.category as keyof typeof CATEGORIES
+              const cat    = CATEGORIES[catKey] ?? { icon: '♻️', en: scan.category, ms: scan.category }
+
+              return (
+                <div key={scan.id} className="bg-white rounded-2xl border border-brand-border p-4 shadow-sm">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl">{cat.icon}</span>
+                      <span className="text-brand-charcoal font-semibold text-sm">
+                        {lang === 'ms' ? cat.ms : cat.en}
+                      </span>
+                    </div>
+                    <span className="bg-brand-green-pale text-brand-green text-xs font-bold px-3 py-1 rounded-full">
+                      +{scan.pointsEarned} pts
                     </span>
                   </div>
-                  <span className="bg-brand-green-pale text-brand-green text-xs font-bold px-3 py-1 rounded-full">
-                    +{scan.pointsEarned} pts
-                  </span>
-                </div>
 
-                {/* Bottom row: weight + date */}
-                <div className="flex items-center justify-between text-sm text-brand-muted">
-                  <span>{scan.weightKg} kg</span>
-                  <span className="text-xs">{formatDate(scan.createdAt)}</span>
-                </div>
+                  <div className="flex items-center justify-between text-sm text-brand-muted">
+                    <span>{scan.weightKg} kg</span>
+                    <span className="text-xs">{formatDate(scan.createdAt)}</span>
+                  </div>
 
-                {/* Status badge */}
-                <div className="mt-2 pt-2 border-t border-brand-border">
-                  {scan.status === 'pending' ? (
-                    <span className="text-xs text-amber-600 font-semibold">
-                      ⏳ {lang === 'ms' ? 'Menunggu kelulusan' : 'Pending approval'}
-                    </span>
-                  ) : approved ? (
-                    <span className="text-xs text-brand-green font-semibold">
-                      ✅ {lang === 'ms' ? 'Diluluskan' : 'Approved'}
-                    </span>
-                  ) : (
-                    <span className="text-xs text-brand-reject font-semibold">
-                      ❌ {lang === 'ms' ? 'Ditolak' : 'Rejected'}
-                    </span>
-                  )}
+                  <div className="mt-2 pt-2 border-t border-brand-border">
+                    {scan.status === 'pending' ? (
+                      <span className="text-xs text-amber-600 font-semibold">
+                        ⏳ {lang === 'ms' ? 'Menunggu kelulusan' : 'Pending approval'}
+                      </span>
+                    ) : scan.status === 'approved' ? (
+                      <span className="text-xs text-brand-green font-semibold">
+                        ✅ {lang === 'ms' ? 'Diluluskan' : 'Approved'}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-brand-reject font-semibold">
+                        ❌ {lang === 'ms' ? 'Ditolak' : 'Rejected'}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )
-          })}
-        </div>
+              )
+            })}
+          </div>
+        </>
+      )}
+
+      {/* ── VOUCHERS TAB ── */}
+      {tab === 'vouchers' && (
+        <>
+          <div className="flex items-center justify-between">
+            <h2 className="text-brand-charcoal font-semibold text-base">
+              {lang === 'ms' ? 'Baucar Saya' : 'My Vouchers'}
+            </h2>
+            <span className="text-brand-muted text-xs">
+              {vouchers.length} {lang === 'ms' ? 'jumlah' : 'total'}
+            </span>
+          </div>
+
+          {vouchers.length === 0 && (
+            <div className="bg-white rounded-2xl border border-brand-border p-8 text-center shadow-sm">
+              <div className="text-5xl mb-3">🎫</div>
+              <p className="text-brand-charcoal font-semibold mb-1">
+                {lang === 'ms' ? 'Belum ada baucar.' : 'No vouchers yet.'}
+              </p>
+              <p className="text-brand-muted text-sm mb-4">
+                {lang === 'ms' ? 'Tebus mata anda untuk jana baucar.' : 'Redeem your points to generate a voucher.'}
+              </p>
+              <Link
+                href={`/redeem/${qrCode}`}
+                className="inline-block bg-brand-green text-white px-6 py-3 rounded-xl font-semibold text-sm"
+              >
+                {lang === 'ms' ? 'Tebus Hadiah 🎁' : 'Redeem Rewards 🎁'}
+              </Link>
+            </div>
+          )}
+
+          {/* Active vouchers first */}
+          {activeVouchers.length > 0 && (
+            <div className="space-y-3">
+              <p className="text-brand-charcoal text-xs font-semibold uppercase tracking-wide">
+                {lang === 'ms' ? 'Aktif' : 'Active'}
+              </p>
+              {activeVouchers.map(v => (
+                <Link
+                  key={v.code}
+                  href={`/voucher/${v.code}`}
+                  className="block bg-white rounded-2xl border-2 border-brand-green p-4 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg">🎫</span>
+                        <span className="text-brand-charcoal font-semibold text-sm truncate">
+                          {v.rewardLabel}
+                        </span>
+                      </div>
+                      <p className="text-brand-muted text-xs">{formatDate(v.createdAt)}</p>
+                      <p className="text-brand-charcoal font-mono text-xs mt-1 tracking-widest">{v.code}</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <span className="bg-brand-green text-white text-xs font-bold px-2 py-1 rounded-full block mb-1">
+                        ACTIVE
+                      </span>
+                      <span className="text-brand-muted text-xs">{v.pointsCost} pts</span>
+                    </div>
+                  </div>
+                  <p className="text-brand-green text-xs font-semibold mt-2">
+                    {lang === 'ms' ? 'Ketik untuk lihat QR kod →' : 'Tap to view QR code →'}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          )}
+
+          {/* Used vouchers */}
+          {redeemedVouchers.length > 0 && (
+            <div className="space-y-3">
+              <p className="text-brand-charcoal text-xs font-semibold uppercase tracking-wide">
+                {lang === 'ms' ? 'Telah Digunakan' : 'Used'}
+              </p>
+              {redeemedVouchers.map(v => (
+                <Link
+                  key={v.code}
+                  href={`/voucher/${v.code}`}
+                  className="block bg-white rounded-2xl border border-brand-border p-4 shadow-sm opacity-60"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg">🎫</span>
+                        <span className="text-brand-charcoal font-semibold text-sm truncate line-through">
+                          {v.rewardLabel}
+                        </span>
+                      </div>
+                      <p className="text-brand-muted text-xs">
+                        {lang === 'ms' ? 'Digunakan' : 'Used'}: {v.redeemedAt ? formatDate(v.redeemedAt) : '—'}
+                      </p>
+                      <p className="text-brand-muted font-mono text-xs mt-1 tracking-widest">{v.code}</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <span className="bg-brand-border text-brand-muted text-xs font-bold px-2 py-1 rounded-full block mb-1">
+                        USED
+                      </span>
+                      <span className="text-brand-muted text-xs">{v.pointsCost} pts</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </>
       )}
 
       {/* Redeem button */}

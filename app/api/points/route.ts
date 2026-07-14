@@ -7,7 +7,10 @@ export async function GET(request: NextRequest) {
 
   const household = await prisma.household.findUnique({
     where: { qrCode },
-    include: { scans: { orderBy: { createdAt: 'desc' } } },
+    include: {
+      scans:    { orderBy: { createdAt: 'desc' } },
+      vouchers: { orderBy: { createdAt: 'desc' } },
+    },
   })
 
   if (!household) return Response.json({ error: 'Not found' }, { status: 404 })
@@ -31,6 +34,14 @@ export async function GET(request: NextRequest) {
       status:       s.status,
       photoUrl:     s.photoUrl,
       createdAt:    s.createdAt,
+    })),
+    vouchers: household.vouchers.map(v => ({
+      code:        v.code,
+      rewardLabel: v.rewardLabel,
+      pointsCost:  v.pointsCost,
+      status:      v.status,
+      createdAt:   v.createdAt,
+      redeemedAt:  v.redeemedAt,
     })),
   })
 }

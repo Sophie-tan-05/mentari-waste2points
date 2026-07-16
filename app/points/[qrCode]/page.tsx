@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useLang } from '@/components/LanguageProvider'
 import PointsBadge from '@/components/PointsBadge'
@@ -50,13 +50,15 @@ export default function PointsPage() {
   const params  = useParams()
   const qrCode  = params.qrCode as string
   const { lang } = useLang()
+  const searchParams = useSearchParams()
+  const initialTab: Tab = searchParams.get('tab') === 'vouchers' ? 'vouchers' : 'recycling'
 
   const [household, setHousehold] = useState<HouseholdData | null>(null)
   const [scans,     setScans]     = useState<Scan[]>([])
   const [vouchers,  setVouchers]  = useState<Voucher[]>([])
   const [loading,   setLoading]   = useState(true)
   const [gone,      setGone]      = useState(false)
-  const [tab,       setTab]       = useState<Tab>('recycling')
+  const [tab,       setTab]       = useState<Tab>(initialTab)
 
   const fetchData = useCallback(async () => {
     const res = await fetch(`/api/points?qrCode=${encodeURIComponent(qrCode)}`)

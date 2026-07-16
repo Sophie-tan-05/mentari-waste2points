@@ -18,9 +18,17 @@ export default async function ScanPage({
   return (
     <main className="max-w-md mx-auto px-4 py-6 space-y-5">
       {/* Back link */}
-      <Link href="/" className="text-brand-muted text-sm flex items-center gap-1 hover:text-brand-green transition-colors">
-        ← Laman Utama / Home
-      </Link>
+      <div className="flex items-center justify-between">
+        <Link href="/" className="text-brand-muted text-sm flex items-center gap-1 hover:text-brand-green transition-colors">
+          ← Laman Utama / Home
+        </Link>
+        <Link
+          href={`/points/${qrCode}?tab=vouchers`}
+          className="text-brand-green text-sm font-semibold flex items-center gap-1 hover:text-brand-green-mid transition-colors"
+        >
+          🎫 Baucar Saya / My Vouchers
+        </Link>
+      </div>
 
       <PointsBadge unit={household.unit} points={household.points} />
 

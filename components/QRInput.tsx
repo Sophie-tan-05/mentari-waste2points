@@ -11,7 +11,6 @@ export default function QRInput({ lang }: Props) {
   const router = useRouter()
   const [tab, setTab]               = useState<'qr' | 'phone'>('qr')
   const [scanning, setScanning]     = useState(false)
-  const [manualCode, setManualCode] = useState('')
   const [phone, setPhone]           = useState('')
   const [loading, setLoading]       = useState(false)
   const [error, setError]           = useState('')
@@ -73,8 +72,8 @@ export default function QRInput({ lang }: Props) {
       setScanning(false)
       setError(
         lang === 'ms'
-          ? 'Kamera tidak dapat diakses. Sila masukkan kod secara manual.'
-          : 'Camera not accessible. Please enter the code manually.'
+          ? 'Kamera tidak dapat diakses. Sila cuba lagi.'
+          : 'Camera not accessible. Please try again.'
       )
     }
   }
@@ -85,13 +84,6 @@ export default function QRInput({ lang }: Props) {
       scannerRef.current = null
     }
     setScanning(false)
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    const code = manualCode.trim().toUpperCase()
-    if (!code) return
-    await validateAndRedirect(code)
   }
 
   async function handlePhoneLogin(e: React.FormEvent) {
@@ -191,58 +183,10 @@ export default function QRInput({ lang }: Props) {
             </div>
           )}
 
-          {/* OR divider */}
-          <div className="flex items-center gap-3 text-muted">
-            <span className="flex-1 h-px bg-[#C8E6C9]" />
-            <em className="not-italic text-[.84rem] font-semibold">{lang === 'ms' ? 'atau' : 'or'}</em>
-            <span className="flex-1 h-px bg-[#C8E6C9]" />
-          </div>
-
-          {/* Manual QR input */}
-          <form onSubmit={handleSubmit} className="flex flex-col gap-[14px]">
-        <input
-          type="text"
-          value={manualCode}
-          onChange={e => {
-            setManualCode(e.target.value.toUpperCase())
-            if (error) setError('')
-          }}
-          placeholder={lang === 'ms' ? 'Masukkan kod (cth. DM-8-001)' : 'Enter code (e.g. DM-8-001)'}
-          className={`w-full h-[54px] px-4 rounded-[15px] border text-ink text-base tracking-[.04em] placeholder:text-muted/50 focus:outline-none transition-colors ${
-            error
-              ? 'border-[#C62828]'
-              : 'border-[#C8E6C9] focus:border-green'
-          }`}
-          style={{ background: '#fff' }}
-        />
-        <button
-          type="submit"
-          disabled={loading || !manualCode.trim()}
-          className="w-full h-[54px] rounded-[15px] bg-green text-white font-bold text-base flex items-center justify-center gap-[9px] hover:bg-green-deep disabled:bg-green-pale disabled:text-muted disabled:cursor-not-allowed transition-colors cursor-pointer"
-        >
-          {loading ? (
-            lang === 'ms' ? 'Menyemak…' : 'Checking…'
-          ) : (
-            <>
-              {lang === 'ms' ? 'Teruskan' : 'Continue'}
-              {!loading && (
-                <svg width={18} height={18} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M5 12h12.2l-4.6-4.6L14 6l7 7-7 7-1.4-1.4 4.6-4.6H5z" />
-                </svg>
-              )}
-            </>
+          {/* QR tab error */}
+          {error && (
+            <p className="text-[.85rem] text-center font-bold text-[#C62828]">✕ {error}</p>
           )}
-        </button>
-        </form>
-
-        {/* QR tab error / hint */}
-        {error ? (
-          <p className="text-[.85rem] text-center font-bold text-[#C62828]">✕ {error}</p>
-        ) : (
-          <p className="text-[.85rem] text-center text-muted">
-            {lang === 'ms' ? 'Cuba kod seperti DM-8-001' : 'Try a code like DM-8-001'}
-          </p>
-        )}
         </>
       )}
 

@@ -140,7 +140,7 @@ export default function VoucherPage() {
           <p className="text-brand-muted text-xs">
             {redeemed
               ? 'This voucher has already been redeemed.'
-              : 'Show this QR code at the Lotus\'s checkout counter to redeem your reward.'}
+              : 'Show this QR code at the checkout counter to redeem your reward.'}
           </p>
         </div>
       </div>

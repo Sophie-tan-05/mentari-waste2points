@@ -243,6 +243,16 @@ export default function PointsPage() {
             </span>
           </div>
 
+          {redeemedVouchers.length > 0 && (
+            <Link
+              href={`/history/${qrCode}`}
+              className="flex items-center justify-between bg-brand-green-pale border border-brand-green-light rounded-xl px-4 py-3 text-sm font-semibold text-brand-green"
+            >
+              🧾 {lang === 'ms' ? 'Lihat Sejarah Penebusan' : 'View Redemption History'}
+              <span>→</span>
+            </Link>
+          )}
+
           {vouchers.length === 0 && (
             <div className="bg-white rounded-2xl border border-brand-border p-8 text-center shadow-sm">
               <div className="text-5xl mb-3">🎫</div>

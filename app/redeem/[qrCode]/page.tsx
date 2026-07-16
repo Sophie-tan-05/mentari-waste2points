@@ -126,7 +126,7 @@ export default function RedeemPage() {
               </p>
               <p className="text-brand-charcoal text-2xl font-bold tracking-widest">{voucherCode}</p>
               <p className="text-brand-muted text-xs mt-2">
-                {lang === 'ms' ? 'Tunjukkan kod ini di kaunter Lotus\'s' : 'Show this at the Lotus\'s checkout'}
+                {lang === 'ms' ? 'Tunjukkan kod ini di kaunter' : 'Show this at the checkout counter'}
               </p>
             </div>
           )}
@@ -149,10 +149,17 @@ export default function RedeemPage() {
 
           <button
             onClick={handleDone}
-            className="w-full h-12 border-2 border-brand-green text-brand-green rounded-xl font-semibold text-sm"
+            className="w-full h-12 border-2 border-brand-green text-brand-green rounded-xl font-semibold text-sm mb-3"
           >
             {lang === 'ms' ? 'Tebus Lagi' : 'Redeem Another'}
           </button>
+
+          <Link
+            href={`/history/${qrCode}`}
+            className="block text-center text-brand-muted text-xs underline"
+          >
+            {lang === 'ms' ? 'Lihat Sejarah Penebusan' : 'View Redemption History'}
+          </Link>
         </div>
       </main>
     )

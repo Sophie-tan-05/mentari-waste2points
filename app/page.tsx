@@ -160,7 +160,6 @@ const STATS = [
 ]
 
 const LOCATIONS = [
-  { lat: 3.0895, lon: 101.6370, address: 'Jalan PJS 5/4, Taman Desa Mentari, 46150 Petaling Jaya, Selangor',                                                        en: { name: 'Desa Mentari Blok 8 Community Hall', hours: 'Mon–Sat · 8am–12pm', tag: 'Main Hub'  }, ms: { name: 'Dewan Komuniti Desa Mentari Blok 8', hours: 'Isn–Sab · 8pg–12tgh',   tag: 'Hub Utama'   } },
   { lat: 3.0880, lon: 101.6378, address: '13-1, Jalan PJS 6/5F, Taman Desa Mentari, 46000 Petaling Jaya, Selangor',                                                  en: { name: 'KK Super Mart Desa Mentari',         hours: 'Daily · 8am–10pm',   tag: 'Drop-off'  }, ms: { name: 'KK Super Mart Desa Mentari',          hours: 'Setiap hari · 8pg–10mlm', tag: 'Titik kutip' } },
   { lat: 3.0874, lon: 101.6383, address: 'Jalan PJS 6/6B, PJS 6, 46150 Petaling Jaya, Selangor',                                                                     en: { name: '99 Speedmart Desa Mentari',           hours: 'Daily · 7am–11pm',   tag: 'Drop-off'  }, ms: { name: '99 Speedmart Desa Mentari',            hours: 'Setiap hari · 7pg–11mlm', tag: 'Titik kutip' } },
   { lat: 3.0910, lon: 101.6395, address: 'No.27 & 29 (Ground Floor), Blok A, Dataran Mentari, Jalan PJS 8/12, Dataran Mentari, 46150 Petaling Jaya, Selangor',       en: { name: 'ECONSAVE Mart Dataran Mentari',       hours: 'Daily · 9am–9pm',    tag: 'Drop-off'  }, ms: { name: 'ECONSAVE Mart Dataran Mentari',        hours: 'Setiap hari · 9pg–9mlm',  tag: 'Titik kutip' } },
@@ -535,7 +534,7 @@ function LocationsSection({ lang }: { lang: string }) {
             <div className="flex items-center gap-2 px-4 py-3 bg-brand-green-pale border-b-[2px] border-ink">
               <span className="text-lg">📍</span>
               <p className="font-bold text-[.9rem] text-brand-charcoal m-0">
-                {t('4 Drop-off Points · Desa Mentari', '4 Titik Kutipan · Desa Mentari', lang)}
+                {t(`${LOCATIONS.length} Drop-off Points · Desa Mentari`, `${LOCATIONS.length} Titik Kutipan · Desa Mentari`, lang)}
               </p>
             </div>
             {/* Map — isolation:isolate traps Leaflet z-indexes inside this stacking context */}
